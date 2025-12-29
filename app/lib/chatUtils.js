@@ -25,18 +25,30 @@ async function ensureBaseChatDocument(auction, compradorUid, compradorNameFromAu
   const snap = await getDoc(chatRef);
 
     // ✅ Precio final SIEMPRE numérico y consistente
-  const precioFinal = (() => {
+const precioFinal = (() => {
+  // ✅ COMPRA DIRECTA
+  if (auction.__evento === "compraDirecta") {
     const cd = Number(auction.compraDirecta);
-    if (Number.isFinite(cd) && cd > 0) return cd;
+    return Number.isFinite(cd) ? cd : 0;
+  }
 
-    const act = Number(auction.precioActual);
-    if (Number.isFinite(act) && act > 0) return act;
+  // ✅ CIERRE POR PUJA — USAR PRECIO GANADOR REAL
+  const ganador =
+    Number(auction.precioFinal) ||
+    Number(auction.precioGanador) ||
+    Number(auction.ultimoMonto) ||
+    Number(auction.highestBid);
 
-    const base = Number(auction.precioBase);
-    if (Number.isFinite(base) && base > 0) return base;
+  if (Number.isFinite(ganador) && ganador > 0) {
+    return ganador;
+  }
 
-    return 0;
-  })();
+  // fallback extremo
+  const base = Number(auction.precioBase);
+  return Number.isFinite(base) ? base : 0;
+})();
+
+
 
 
   const cardImage =
@@ -100,7 +112,12 @@ export async function ensureChatForClosedAuction(auction, compradorUid) {
   const compradorName = auction.compradorNameSnapshot || auction.ultimoPostorName || "Comprador";
 
   const { chatId, chatRef, precioFinal, cardImage } =
-    await ensureBaseChatDocument(auction, compradorUid, compradorName);
+    await ensureBaseChatDocument(
+  { ...auction, __evento: "cierre" },
+  compradorUid,
+  compradorName
+);
+
       // 🛑 Si ya hubo compra directa para esta subasta en este chat,
   // NO mandes "cierre" (si no, salen 2 mensajes).
   const messagesCol = collection(db, "chats", chatId, "messages");
@@ -196,12 +213,16 @@ export async function sendAutoMessageForBuyNow(
     auction.ultimoPostorName ||
     "Comprador";
 
-  const { chatId, chatRef, precioFinal, cardImage } =
-    await ensureBaseChatDocument(
-      { ...auction, cantidadComprada: cleanCantidad },
-      compradorUid,
-      compradorName
-    );
+  await ensureBaseChatDocument(
+  {
+    ...auction,
+    cantidadComprada: cleanCantidad,
+    __evento: "compraDirecta",
+  },
+  compradorUid,
+  compradorName
+);
+
 
   const messagesCol = collection(db, "chats", chatId, "messages");
 
