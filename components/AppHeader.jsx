@@ -130,44 +130,43 @@ export default function AppHeader() {
 
 
           {/* LINKS DEL MENÚ */}
-          <nav className="flex flex-col gap-4 text-sm">
-            <Link href="/mis-subastas" onClick={toggleMenu} className="hover:text-emerald-400">
-              Mis subastas
-            </Link>
+          <nav className="flex flex-col gap-4 text-sm text-gray-200">
+  <Link href="/mis-subastas" onClick={toggleMenu} className="hover:text-emerald-400">
+    Mis subastas
+  </Link>
 
-            <Link href="/mis-participaciones" onClick={toggleMenu} className="hover:text-emerald-400">
-              Mis participaciones
-            </Link>
+  <Link href="/mis-participaciones" onClick={toggleMenu} className="hover:text-emerald-400">
+    Mis participaciones
+  </Link>
 
-            <Link href="/mis-ganadas" onClick={toggleMenu} className="hover:text-emerald-400">
-              Ganadas
-            </Link>
+  <Link href="/mis-ganadas" onClick={toggleMenu} className="hover:text-emerald-400">
+    Ganadas
+  </Link>
 
-            <Link href="/chats" onClick={toggleMenu} className="hover:text-emerald-400">
-              Chats
-            </Link>
-              <Link
-                href="/buscar-usuarios"
-                onClick={toggleMenu}
-                className="hover:text-emerald-400"
-              >
-                Buscar usuarios
-              </Link>
-             <Link href="/terminos" className="hover:text-gray-200">
-            Términos y Condiciones
-          </Link>
-            <Link href="/privacidad" className="hover:text-gray-200">
-            Política de Privacidad
-          </Link>
+  <Link href="/chats" onClick={toggleMenu} className="hover:text-emerald-400">
+    Chats
+  </Link>
 
-            <Link
-              href="/publish"
-              onClick={toggleMenu}
-              className="px-3 py-1 rounded bg-emerald-600 hover:bg-emerald-500 text-white w-fit"
-            >
-              Publicar
-            </Link>
-          </nav>
+  <Link href="/buscar-usuarios" onClick={toggleMenu} className="hover:text-emerald-400">
+    Buscar usuarios
+  </Link>
+
+  <Link href="/terminos" onClick={toggleMenu} className="hover:text-white">
+    Términos y Condiciones
+  </Link>
+
+  <Link href="/privacidad" onClick={toggleMenu} className="hover:text-white">
+    Política de Privacidad
+  </Link>
+
+  <Link
+    href="/publish"
+    onClick={toggleMenu}
+    className="px-3 py-1 rounded bg-emerald-600 hover:bg-emerald-500 text-white w-fit"
+  >
+    Publicar
+  </Link>
+</nav>
 
           {/* BOTON CERRAR SESIÓN */}
           {user && (
