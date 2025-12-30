@@ -7,20 +7,23 @@ export default function SubastaMiniCard({ subasta }) {
   if (!subasta) return null;
 
   const {
-    id,
-    titulo,
-    imageUrls,
-    imageUrl,
-    precioActual,
-    precioBase,
-    compraDirecta,
-    vendedorUid,
-    vendedorNameSnapshot,
-    vendedorName,
-    vendedorPhotoURL,
-    vendedorAvatar,
-    finaliza,
-  } = subasta;
+  id,
+  titulo,
+  imageUrls,
+  imageUrl,
+  precioActual,
+  precioBase,
+  compraDirecta,
+  ultimoPostorName, // 👈 MISMO nombre que SubastaCard
+  status,           // 👈 para saber si está cerrada
+  vendedorUid,
+  vendedorNameSnapshot,
+  vendedorName,
+  vendedorPhotoURL,
+  vendedorAvatar,
+  finaliza,
+} = subasta;
+
 
   const cardImage =
     Array.isArray(imageUrls) && imageUrls.length > 0
@@ -156,17 +159,35 @@ const isClosed = subasta.status === "closed" || isClosedByTime;
         </p>
       )}
 
-      {/* Precio */}
-      <div className="text-sm font-semibold">
-        {compraDirecta && (
-          <p className="text-emerald-300">
-            💰 Compra directa: <span className="text-white">S/ {compraDirecta}</span>
-          </p>
-        )}
-        <p className="text-emerald-400">
-          🏷 Precio actual: <span className="text-white">S/ {currentPrice}</span>
-        </p>
-      </div>
+      <div className="text-sm font-semibold space-y-0.5">
+  {/* Precio actual */}
+  <p className="text-emerald-400">
+    🏷 Precio actual:{" "}
+    <span className="text-white">S/ {currentPrice}</span>
+  </p>
+
+  {/* Mayor postor (solo si existe) */}
+  {ultimoPostorName && (
+    <p className="text-[11px] text-gray-400">
+      👤 Mayor postor:{" "}
+      <span className="text-gray-200 font-medium">
+        {ultimoPostorName}
+      </span>
+    </p>
+  )}
+
+  {/* Compra directa (solo si NO está cerrada) */}
+  {compraDirecta && !isClosed && (
+
+    <p className="text-pink-400">
+      ⚡ Compra directa:{" "}
+      <span className="text-white font-semibold">
+        S/ {compraDirecta}
+      </span>
+    </p>
+  )}
+</div>
+
     </div>
   );
 }
