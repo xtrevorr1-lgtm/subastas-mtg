@@ -25,10 +25,17 @@ export default function SubastaMiniCard({ subasta }) {
 } = subasta;
 
 
-  const cardImage =
-    Array.isArray(imageUrls) && imageUrls.length > 0
-      ? imageUrls[0]
-      : imageUrl || "/placeholder.png";
+ const cardImage =
+  Array.isArray(imageUrls) && imageUrls.length > 0
+    ? imageUrls[0]
+    : imageUrl && imageUrl.trim() !== ""
+    ? imageUrl
+    : "/magic_card_back.webp";
+{(!imageUrls || imageUrls.length === 0) && !imageUrl && (
+  <p className="text-[10px] text-gray-500 mt-1 text-center">
+    Imagen no proporcionada por el vendedor
+  </p>
+)}
 
   const sellerName =
     vendedorNameSnapshot ||
