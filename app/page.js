@@ -152,30 +152,25 @@ export default function Home() {
   //  SESIÓN + PERFIL
   // =========================
   useEffect(() => {
-  const unsub = onAuthStateChanged(auth, async (u) => {
-    // ✅ si no hay sesión, apaga todo lo que depende de permisos
+  const unsub = onAuthStateChanged(auth, (u) => {
     if (!u) {
       setUser(null);
-      setAuthReady(false);
+      setAuthReady(true); // 🔑 importante
       return;
     }
 
-    // ✅ mientras aseguras perfil, NO declares “ready”
-    setAuthReady(false);
-
-    try {
-      await ensureUserProfile(u); // crea /users/{uid} si falta
-    } catch (err) {
-      console.error("Error asegurando perfil de usuario:", err);
-      // igual seguimos; las reglas ya serán tolerantes
-    }
-
     setUser(u);
-    setAuthReady(true);
+    setAuthReady(true); // 🔥 auth listo inmediatamente
+
+    // 🔄 perfil en background (NO bloquea UI)
+    ensureUserProfile(u).catch((err) => {
+      console.error("Error asegurando perfil de usuario:", err);
+    });
   });
 
   return () => unsub();
 }, []);
+
 
 
 
