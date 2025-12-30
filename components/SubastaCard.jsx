@@ -931,11 +931,12 @@ const canDelete =
                     : "bg-pink-600 hover:bg-pink-700 text-white"
                 }`}
               >
-                {isProcessingBuyNow
-                  ? "Procesando compra..."
-                  : compraDirectaNum != null
-                  ? `Comprar ahora — S/ ${compraDirectaNum}`
-                  : "Sin compra directa"}
+              {isProcessingBuyNow
+  ? "Procesando compra directa..."
+  : compraDirectaNum != null
+  ? `Compra directa — S/ ${compraDirectaNum}`
+  : "Sin compra directa"}
+
               </button>
 
               {esMultiBuyNow &&
