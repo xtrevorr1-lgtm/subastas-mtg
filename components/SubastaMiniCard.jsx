@@ -66,6 +66,19 @@ if (typeof finaliza === "number") {
 
 // estado REAL (Firestore tiene prioridad)
 const isClosed = subasta.status === "closed" || isClosedByTime;
+const terminaHoyFlag =
+  typeof finaliza === "number" &&
+  (() => {
+    const hoy = new Date();
+    const fin = new Date(finaliza);
+
+    return (
+      hoy.getFullYear() === fin.getFullYear() &&
+      hoy.getMonth() === fin.getMonth() &&
+      hoy.getDate() === fin.getDate()
+    );
+  })();
+
 
 
   return (
@@ -77,11 +90,14 @@ const isClosed = subasta.status === "closed" || isClosedByTime;
             : `/subasta/${id}`
         )
       }
-      className={`block cursor-pointer rounded-xl transition p-3 shadow-md ${
-        subasta.source === "programadas"
-          ? "bg-blue-900/20 border border-blue-500/40 hover:border-blue-400"
-          : "bg-[#0c0f16] border border-white/10 hover:border-emerald-500 hover:bg-[#141a24]"
-      }`}
+     className={`block cursor-pointer rounded-xl transition p-3 shadow-md ${
+  terminaHoyFlag && !isClosed
+    ? "bg-yellow-900/30 border border-yellow-500/60 animate-pulse"
+    : subasta.source === "programadas"
+    ? "bg-blue-900/20 border border-blue-500/40 hover:border-blue-400"
+    : "bg-[#0c0f16] border border-white/10 hover:border-emerald-500 hover:bg-[#141a24]"
+}`}
+
     >
       {/* Estado de participación */}
       {subasta.vasGanando !== undefined && (
@@ -133,6 +149,12 @@ const isClosed = subasta.status === "closed" || isClosedByTime;
       <h2 className="text-sm font-semibold text-white mb-2 line-clamp-2">
         {titulo}
       </h2>
+      {terminaHoyFlag && !isClosed && (
+  <div className="mb-1 text-[11px] font-semibold text-yellow-300">
+    ⏰ Termina hoy
+  </div>
+)}
+
 
       {/* Imagen */}
       <div className="aspect-[4/5] w-full rounded-lg overflow-hidden border border-white/10 mb-3">

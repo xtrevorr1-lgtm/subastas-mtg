@@ -39,6 +39,19 @@ function timestampToMs(t) {
   if (t.seconds) return t.seconds * 1000;
   return 0;
 }
+function terminaHoy(finalizaMs) {
+  if (!finalizaMs) return false;
+
+  const hoy = new Date();
+  const fin = new Date(finalizaMs);
+
+  return (
+    hoy.getFullYear() === fin.getFullYear() &&
+    hoy.getMonth() === fin.getMonth() &&
+    hoy.getDate() === fin.getDate()
+  );
+}
+
 
 // cuántas mostramos por “página visual”
 const PAGE_SIZE = 20;
@@ -456,9 +469,24 @@ useEffect(() => {
     );
 
   // “paginación” visual
-  const listToRender = isActiveTab
-    ? subastasFiltradas.slice(0, visibleActiveCount)
-    : subastasFiltradas.slice(0, visibleEndedCount);
+  const sortedSubastas = isActiveTab
+  ? [...subastasFiltradas].sort((a, b) => {
+      const aHoy = terminaHoy(a.finaliza);
+      const bHoy = terminaHoy(b.finaliza);
+
+      // 1️⃣ Las que terminan hoy van primero
+      if (aHoy && !bHoy) return -1;
+      if (!aHoy && bHoy) return 1;
+
+      // 2️⃣ Luego por fecha de finalización más cercana
+      return (a.finaliza ?? Infinity) - (b.finaliza ?? Infinity);
+    })
+  : subastasFiltradas;
+
+const listToRender = isActiveTab
+  ? sortedSubastas.slice(0, visibleActiveCount)
+  : sortedSubastas.slice(0, visibleEndedCount);
+
 
   const canLoadMore = isActiveTab
     ? visibleActiveCount < subastasFiltradas.length
