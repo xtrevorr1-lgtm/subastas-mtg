@@ -90,15 +90,20 @@ const terminaHoyFlag =
             : `/subasta/${id}`
         )
       }
-     className={`block cursor-pointer rounded-xl transition p-3 shadow-md ${
+     className={`relative block cursor-pointer rounded-xl transition p-3 shadow-md ${
   terminaHoyFlag && !isClosed
-    ? "bg-yellow-900/30 border border-yellow-500/60 animate-pulse"
+  ? "border border-yellow-500/70"
+
     : subasta.source === "programadas"
     ? "bg-blue-900/20 border border-blue-500/40 hover:border-blue-400"
     : "bg-[#0c0f16] border border-white/10 hover:border-emerald-500 hover:bg-[#141a24]"
 }`}
 
     >
+      {terminaHoyFlag && !isClosed && (
+  <div className="absolute inset-0 rounded-xl bg-yellow-500/10 animate-pulse pointer-events-none" />
+)}
+<div className="relative z-10">
       {/* Estado de participación */}
       {subasta.vasGanando !== undefined && (
         subasta.vasGanando ? (
@@ -210,6 +215,7 @@ const terminaHoyFlag =
   )}
 </div>
 
+    </div>
     </div>
   );
 }
