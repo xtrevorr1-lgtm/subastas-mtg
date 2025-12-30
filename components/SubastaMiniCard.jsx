@@ -190,9 +190,14 @@ const faltaMenosDeUnaHora =
       {/* Imagen */}
 <div className="aspect-[4/5] w-full rounded-lg overflow-hidden border border-white/10 mb-1">
   <img
-    src={cardImage}
-    className="w-full h-full object-cover transition-transform duration-300 ease-out hover:scale-110"
-  />
+  src={cardImage}
+  onError={(e) => {
+    e.currentTarget.onerror = null;
+    e.currentTarget.src = "/Magic_card_back.webp";
+  }}
+  className="w-full h-full object-cover transition-transform duration-300 ease-out hover:scale-110"
+/>
+
 </div>
 
 {/* Aviso si no hay imagen real */}
