@@ -727,12 +727,17 @@ const canDelete =
     {currentImage ? (
       // eslint-disable-next-line @next/next/no-img-element
       <img
-        src={currentImage}
-        alt={tituloMostrar}
-        loading="lazy"
-        className="w-full h-auto max-h-[480px] object-contain rounded-lg cursor-zoom-in"
-        onClick={() => setZoomOpen(true)}
-      />
+  src={currentImage}
+  alt={tituloMostrar}
+  loading="lazy"
+  onError={(e) => {
+    e.currentTarget.onerror = null;
+    e.currentTarget.src = "/Magic_card_back.webp";
+  }}
+  className="w-full h-auto max-h-[480px] object-contain rounded-lg cursor-zoom-in"
+  onClick={() => setZoomOpen(true)}
+/>
+
     ) : (
       <span className="text-sm text-gray-500">Imagen carta</span>
     )}
@@ -755,11 +760,16 @@ const canDelete =
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={url}
-            alt={`Vista ${idx + 1}`}
-            loading="lazy"
-            className="w-full h-full object-cover"
-          />
+  src={url}
+  alt={`Vista ${idx + 1}`}
+  loading="lazy"
+  onError={(e) => {
+    e.currentTarget.onerror = null;
+    e.currentTarget.src = "/Magic_card_back.webp";
+  }}
+  className="w-full h-full object-cover"
+/>
+
         </button>
       ))}
     </div>
@@ -1169,11 +1179,16 @@ const canDelete =
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={currentImage}
-            alt={tituloMostrar}
-            loading="lazy"
-            className="max-w-[90vw] max-h-[90vh] object-contain"
-          />
+  src={currentImage}
+  alt={tituloMostrar}
+  loading="lazy"
+  onError={(e) => {
+    e.currentTarget.onerror = null;
+    e.currentTarget.src = "/Magic_card_back.webp";
+  }}
+  className="max-w-[90vw] max-h-[90vh] object-contain"
+/>
+
         </div>
       )}
     </>
