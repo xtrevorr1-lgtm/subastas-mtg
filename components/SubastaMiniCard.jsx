@@ -79,6 +79,10 @@ const terminaHoyFlag =
     );
   })();
 
+const faltaMenosDeUnaHora =
+  typeof finaliza === "number" &&
+  finaliza - Date.now() <= 60 * 60 * 1000 &&
+  finaliza - Date.now() > 0;
 
 
   return (
@@ -91,18 +95,25 @@ const terminaHoyFlag =
         )
       }
      className={`relative block cursor-pointer rounded-xl transition p-3 shadow-md ${
-  terminaHoyFlag && !isClosed
-  ? "border border-yellow-500/70"
-
+  faltaMenosDeUnaHora && !isClosed
+    ? "border border-red-500/80"
+    : terminaHoyFlag && !isClosed
+    ? "border border-yellow-500/70"
     : subasta.source === "programadas"
     ? "bg-blue-900/20 border border-blue-500/40 hover:border-blue-400"
     : "bg-[#0c0f16] border border-white/10 hover:border-emerald-500 hover:bg-[#141a24]"
 }`}
 
+
     >
-      {terminaHoyFlag && !isClosed && (
-  <div className="absolute inset-0 rounded-xl bg-yellow-500/10 animate-pulse pointer-events-none" />
+     {!isClosed && (
+  faltaMenosDeUnaHora ? (
+    <div className="absolute inset-0 rounded-xl bg-red-500/15 animate-pulse pointer-events-none" />
+  ) : terminaHoyFlag ? (
+    <div className="absolute inset-0 rounded-xl bg-yellow-500/10 animate-pulse pointer-events-none" />
+  ) : null
 )}
+
 <div className="relative z-10">
       {/* Estado de participación */}
       {subasta.vasGanando !== undefined && (
@@ -154,11 +165,18 @@ const terminaHoyFlag =
       <h2 className="text-sm font-semibold text-white mb-2 line-clamp-2">
         {titulo}
       </h2>
-      {terminaHoyFlag && !isClosed && (
+     {!isClosed && faltaMenosDeUnaHora && (
+  <div className="mb-1 text-[11px] font-semibold text-red-400">
+    🔥 Termina en menos de 1 hora
+  </div>
+)}
+
+{!isClosed && !faltaMenosDeUnaHora && terminaHoyFlag && (
   <div className="mb-1 text-[11px] font-semibold text-yellow-300">
     ⏰ Termina hoy
   </div>
 )}
+
 
 
       {/* Imagen */}

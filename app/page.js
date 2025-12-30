@@ -63,6 +63,21 @@ function mergeUniqueById(a = [], b = []) {
   });
   return Array.from(map.values());
 }
+function priorityScore(subasta) {
+  const now = Date.now();
+  const fin = subasta.finaliza;
+
+  if (!fin || subasta.status === "closed") return 3;
+
+  const diff = fin - now;
+
+  if (diff <= 60 * 60 * 1000 && diff > 0) return 0; // 🔥 < 1h
+  if (
+    new Date(fin).toDateString() === new Date(now).toDateString()
+  ) return 1; // ⏰ hoy
+
+  return 2; // normal
+}
 
 // Mapea un doc de Firestore → objeto subasta con campos calculados
 async function mapSubastaDoc(db, docSnap) {
@@ -282,7 +297,18 @@ endedCombined.sort((x, y) => {
   return ay - ax;
 });
 
+activeNow.sort((a, b) => {
+  const pa = priorityScore(a);
+  const pb = priorityScore(b);
+
+  if (pa !== pb) return pa - pb;
+
+  // mismo nivel → las que terminan antes primero
+  return (a.finaliza || 0) - (b.finaliza || 0);
+});
+
 setActiveSubs(activeNow);
+
 setEndedSubs(endedCombined);
 
 
