@@ -30,7 +30,8 @@ export default function SubastaMiniCard({ subasta }) {
     ? imageUrls[0]
     : imageUrl && imageUrl.trim() !== ""
     ? imageUrl
-    : "/magic_card_back.webp";
+    : "/Magic_card_back.webp";
+
 {(!imageUrls || imageUrls.length === 0) && !imageUrl && (
   <p className="text-[10px] text-gray-500 mt-1 text-center">
     Imagen no proporcionada por el vendedor
@@ -187,12 +188,20 @@ const faltaMenosDeUnaHora =
 
 
       {/* Imagen */}
-      <div className="aspect-[4/5] w-full rounded-lg overflow-hidden border border-white/10 mb-3">
-        <img
-          src={cardImage}
-          className="w-full h-full object-cover transition-transform duration-300 ease-out hover:scale-110"
-        />
-      </div>
+<div className="aspect-[4/5] w-full rounded-lg overflow-hidden border border-white/10 mb-1">
+  <img
+    src={cardImage}
+    className="w-full h-full object-cover transition-transform duration-300 ease-out hover:scale-110"
+  />
+</div>
+
+{/* Aviso si no hay imagen real */}
+{(!imageUrls || imageUrls.length === 0) && !imageUrl && (
+  <p className="text-[10px] text-gray-500 text-center mb-2">
+    Imagen no proporcionada por el vendedor
+  </p>
+)}
+
 
       {/* Tiempo */}
       {subasta.source === "programadas" ? (
