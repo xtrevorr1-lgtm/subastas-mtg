@@ -213,15 +213,17 @@ export async function sendAutoMessageForBuyNow(
     auction.ultimoPostorName ||
     "Comprador";
 
+ const { chatId, chatRef, precioFinal, cardImage } =
   await ensureBaseChatDocument(
-  {
-    ...auction,
-    cantidadComprada: cleanCantidad,
-    __evento: "compraDirecta",
-  },
-  compradorUid,
-  compradorName
-);
+    {
+      ...auction,
+      cantidadComprada: cleanCantidad,
+      __evento: "compraDirecta",
+    },
+    compradorUid,
+    compradorName
+  );
+
 
 
   const messagesCol = collection(db, "chats", chatId, "messages");

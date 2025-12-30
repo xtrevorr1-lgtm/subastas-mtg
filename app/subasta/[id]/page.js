@@ -15,10 +15,7 @@ import { db, auth } from "../../firebase";
 import { onAuthStateChanged } from "firebase/auth";
 
 import SubastaCard from "../../../components/SubastaCard";
-import {
-  ensureChatForClosedAuction,
-  sendAutoMessageForBuyNow,
-} from "../../lib/chatUtils";
+
 
 export default function SubastaPage() {
   const router = useRouter();
@@ -76,57 +73,8 @@ useEffect(() => {
 
     return () => unsub();
   }, [id]);
-useEffect(() => {
-  if (!subasta) return;
-
-  // Solo cuando ya está cerrada (por tiempo o por cualquier método)
-  // ⛔️ NO crear chat aquí si el cierre fue por compra directa
-if (subasta.status !== "closed") return;
-
-// ⛔️ NO crear chat aquí si fue compra directa
-if (subasta.closedBy === "buyNow") return;
-
-if (subasta.closedAt && subasta.compraDirecta) return;
 
 
-  // Evita duplicar en re-renders / re-snapshots
-  if (autoChatDoneRef.current) return;
-
-  // Necesitamos un ganador para crear chat
-  const ganadorUid = subasta.ultimoPostorUid;
-  if (!ganadorUid) return;
-
-  autoChatDoneRef.current = true;
-
-  const vendedorSnap =
-    subasta.vendedorNameSnapshot || subasta.vendedorName || "Vendedor";
-
-  const compradorSnap =
-    subasta.compradorNameSnapshot ||
-    subasta.ultimoPostorName ||
-    "Comprador";
-
-  // Si hay winnerQuantities, usamos la cantidad ganada real.
-  const cantidadGanada =
-    (subasta.winnerQuantities &&
-      subasta.winnerQuantities[ganadorUid]) ||
-    subasta.cantidadComprada ||
-    null;
-
-  ensureChatForClosedAuction(
-    {
-      ...subasta,
-      vendedorNameSnapshot: vendedorSnap,
-      compradorNameSnapshot: compradorSnap,
-      cantidadComprada: cantidadGanada,
-    },
-    ganadorUid
-  ).catch((err) => {
-    console.error("Error creando chat al cierre:", err);
-    // si falló, permitimos reintento en el próximo snapshot
-    autoChatDoneRef.current = false;
-  });
-}, [subasta]);
 
   if (loading) {
     return (
@@ -236,20 +184,7 @@ if (bidAmount < minNext) {
         createdAt: serverTimestamp(),
       });
 
-      /* Generar chat automático si cerró */
-      if (closedByThisBid) {
-        await ensureChatForClosedAuction(
-  {
-    ...subasta,
-    precioActual: bidAmount,
-    cantidadComprada: subasta.cantidad,
-    vendedorNameSnapshot: subasta.vendedorNameSnapshot || subasta.vendedorName || "Vendedor",
-    compradorNameSnapshot: user.displayName || user.email || "Comprador",
-  },
-  user.uid
-);
-
-      }
+      
     } catch (err) {
       console.error("Error al pujar:", err);
       alert(err.message);
@@ -332,22 +267,7 @@ if (bidAmount < minNext) {
         createdAt: serverTimestamp(),
       });
 const buyerName = user.displayName || user.email || "Comprador";
-      /* Mensaje automático por compra directa */
-    await sendAutoMessageForBuyNow(
-  {
-    ...subasta,
-    ultimoPostorName: buyerName,
-    vendedorNameSnapshot:
-      subasta.vendedorNameSnapshot || subasta.vendedorName || "Vendedor",
-    compradorNameSnapshot: buyerName,
-  },
-  user.uid,
-  qtyComprada,
-  buyerName
-);
-
-
-
+      
     } catch (err) {
       console.error("Error en compra directa:", err);
       alert(err.message);
