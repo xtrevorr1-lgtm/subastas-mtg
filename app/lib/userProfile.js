@@ -19,7 +19,13 @@ export async function ensureUserProfile(user) {
   const userRef = doc(db, "users", uid);
   const snap = await getDoc(userRef);
 
-  const searchName = (displayName || "").toLowerCase();
+  const safeDisplayName =
+  displayName?.trim() ||
+  email?.split("@")[0] ||
+  "usuario";
+
+const searchName = safeDisplayName.toLowerCase();
+
 
   // =========================
   // 1) SI NO EXISTE: CREAR
@@ -27,9 +33,11 @@ export async function ensureUserProfile(user) {
   if (!snap.exists()) {
     await setDoc(userRef, {
       uid,
-      displayName: displayName || "",
-      searchName,
-      email: email || "",
+      displayName: safeDisplayName,
+displayNameLower: searchName,
+searchName,
+email: email || "",
+
       photoURL: photoURL || "",
       avatarUrl: photoURL || "",
       avatarPath: null,
@@ -61,10 +69,13 @@ export async function ensureUserProfile(user) {
     data.isBanned == null;
 
   // B) actualizar datos si cambiaron
-  const needsProfileUpdate =
-    (data.displayName || "") !== (displayName || "") ||
-    (data.photoURL || "") !== (photoURL || "") ||
-    (data.searchName || "") !== searchName;
+ const needsProfileUpdate =
+  !data.displayName ||
+  !data.searchName ||
+  !data.email ||
+  data.displayName !== safeDisplayName ||
+  data.searchName !== searchName;
+
 
   // Si no hay nada que cambiar, salimos
   if (!needsFlags && !needsProfileUpdate) return;
@@ -81,14 +92,18 @@ export async function ensureUserProfile(user) {
           }
         : {}),
 
-      ...(needsProfileUpdate
-        ? {
-            displayName: displayName || data.displayName || "",
-            searchName,
-            photoURL: photoURL || data.photoURL || "",
-            avatarUrl: photoURL ? photoURL : data.avatarUrl || "",
-          }
-        : {}),
+     ...(needsProfileUpdate
+  ? {
+      displayName: safeDisplayName,
+      displayNameLower: searchName, // 🔥 ESTE ES EL QUE USA EL BUSCADOR
+      searchName, // puedes dejarlo si ya existe
+      email: email || data.email || "",
+      photoURL: photoURL || data.photoURL || "",
+      avatarUrl: photoURL || data.avatarUrl || "",
+      repairedAt: serverTimestamp(), // 👈 trazabilidad
+    }
+  : {}),
+
 
       updatedAt: serverTimestamp(),
     },
